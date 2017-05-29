@@ -5,16 +5,25 @@ import { HttpModule } from '@angular/http';
 
 import { AppComponent } from './app.component';
 
+import { GeolocationService } from './geo/geolocation.service';
+import { WeatherComponent } from './weather/weather.component';
+import { WeatherApiService } from './weather/weather-api.service';
+
+
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    WeatherComponent
   ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule
   ],
-  providers: [],
+  providers: [
+    GeolocationService,
+    WeatherApiService,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
