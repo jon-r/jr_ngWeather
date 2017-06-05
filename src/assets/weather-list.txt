@@ -1,0 +1,23 @@
+[ ] sun
+[ ] overcast
+[ ] cloud
+[ ] light rain
+[ ] heavy rain
+[ ] light snow
+[ ] heavy snow
+[ ] sleet
+[ ] fog
+[ ] lightning storm
+[ ] lying snow
+[ ] hail
+
+
+temp
+weather
+
+
+HH:mm
+location
+season
+dd mm yy
+day

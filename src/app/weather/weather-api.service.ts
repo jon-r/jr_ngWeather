@@ -7,31 +7,66 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/publishReplay';
 
 import { Geolocation } from '../geo/geolocation';
+import { WeatherCache } from './weather-cache';
+
 
 @Injectable()
 export class WeatherApiService {
 
 // TODO: setup cached api response
 
-
-
-  weather: any;
+  cacheTime: 3.6e6;
 
   constructor(private http: Http) { }
 
-  getWeather(coords) { // : Geolocation
-    console.log('getting weather');
+  private getWeatherStorage(currTime): WeatherCache {
 
+    const storage = window.localStorage;
+    const weatherStore = JSON.parse(storage.getItem('weatherResult'));
+
+    console.log(storage);
+
+    return (
+      weatherStore
+      && currTime - weatherStore.timeStamp < 3.6e6
+    ) ? weatherStore : null;
+  }
+
+  getCachedWeather(coords): Object {
+    const currTime = new Date().getTime();
+    const weatherCache = this.getWeatherStorage(currTime);
+
+    if (weatherCache) {
+      return weatherCache.data;
+    }
+
+    this.getWeather(coords)
+    .subscribe(data => {
+      console.log(data);
+
+      const store = JSON.stringify({
+        timeStamp: currTime,
+        coords,
+        data,
+      });
+
+      window.localStorage.setItem('weatherResult', store);
+
+      return data;
+    });
+  }
+
+  getWeather(coords): Observable<Object> {
+    console.log('getting weather');
     const url = 'http://api.openweathermap.org/data/2.5/weather';
     const params = {
       appid: 'e57f5f05dbfe0081c7d4862a86267265',
       lat: coords.lat,
       lon: coords.lon,
+      units: 'metric',
     };
-
-    this.http.get(url, {params})
-      .map(result => result.json())
-      .subscribe(weather => (this.weather = weather, console.log(weather)));
+    return this.http.get(url, {params})
+      .map(result => result.json());
   }
 
 }

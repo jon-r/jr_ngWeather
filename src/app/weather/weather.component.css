@@ -1,0 +1,22 @@
+.weather-frame {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  display: flex;
+  align-items: flex-end;
+  width: 100%;
+  max-width: 500px;
+  height: 150px;
+  border-radius: 8px;
+  background: #eee;
+  padding: 16px;
+}
+.frame-inner {
+  flex: 1;
+}
+
+.text-right {
+  text-align: right;
+}
+
+span {
+  display: block;
+}

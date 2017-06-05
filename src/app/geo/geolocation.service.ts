@@ -12,31 +12,34 @@ export class GeolocationService {
 
   private static location: Geolocation;
 
+  private errorCodes = {
+    1: 'errors.location.permissionDenied',
+    2: 'errors.location.positionUnavailable',
+    3: 'errors.location.timeout',
+    noSupport: 'errors.location.unsupportedBrowser',
+  };
+
+  private optsDefaults = {
+    enableHighAccuracy: true,
+    maximumAge: 30000,
+    timeout: 27000,
+  };
 
   constructor() { }
 
-  getLocation(opts) {
+  getLocation(opts = this.optsDefaults) {
     return Observable.create(observer => {
-      if (window.navigator && window.navigator.geolocation) {
-        window.navigator.geolocation.getCurrentPosition(
+      const nav = window.navigator;
+
+      if (nav && nav.geolocation) {
+        return nav.geolocation.getCurrentPosition(
           position => observer.next(position),
-          error => {
-            switch (error.code) {
-            case 1:
-              observer.error('errors.location.permissionDenied');
-              break;
-            case 2:
-              observer.error('errors.location.positionUnavailable');
-              break;
-            case 3:
-              observer.error('errors.location.timeout');
-              break;
-            }
-          }, opts);
-        } else {
-          observer.error('errors.location.unsupportedBrowser');
-        }
-      });
-    }
+          error => this.errorCodes[error.code],
+          opts,
+        );
+      }
+      return this.errorCodes.noSupport;
+    });
+  }
 
 }
