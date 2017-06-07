@@ -2,12 +2,8 @@ import { Injectable } from '@angular/core';
 
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/operator/map';
-
-import { Geolocation } from '../geo/geolocation';
 
 export interface CacheParts {
-  location: Geolocation;
   weather: any;
   timeStamp: number;
 };
@@ -21,18 +17,21 @@ export class CacheService {
 
   constructor() { }
 
-  setCached(values: CacheParts) {
+  set(values: CacheParts) {
     window.localStorage.setItem('cache', JSON.stringify(values));
     this.dataCache.next(values);
   }
 
-  getCached() {
+  get() {
     const src = window.localStorage.getItem('cache');
     this.dataCache.next(JSON.parse(src));
   }
 
-  checkCached() {
+  check() {
     const src = window.localStorage.getItem('cache');
+    if (!src) {
+      return false;
+    }
     const timeCheck = Date.now() - JSON.parse(src).timeStamp;
     return timeCheck < 6e5;
   }

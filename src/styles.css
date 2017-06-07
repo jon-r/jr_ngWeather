@@ -1,1 +1,89 @@
-/* You can add global styles to this file, and also import other style files */
+/*! minireset.css v0.0.2 | MIT License | github.com/jgthms/minireset.css */
+html,body,p,ol,ul,li,dl,dt,dd,blockquote,figure,fieldset,legend,textarea,pre,iframe,hr,h1,h2,h3,h4,h5,h6{margin:0;padding:0}h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}ul{list-style:none}button,input,select,textarea{margin:0}html{box-sizing:border-box}*{box-sizing:inherit}*:before,*:after{box-sizing:inherit}img,embed,object,audio,video{height:auto;max-width:100%}iframe{border:0}table{border-collapse:collapse;border-spacing:0}td,th{padding:0;text-align:left}
+
+/* type -------------------------------------------------------------------- */
+
+body {
+  font: 300 18px/1 "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* frame ------------------------------------------------------------------- */
+
+.weather-frame {
+  margin: 20px auto;
+  max-width: 500px;
+  height: 200px;
+  border-radius: 8px;
+  padding: 16px;
+  position: relative;
+  background-color: #eee;
+}
+
+.weather-content {
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  position: relative;
+}
+
+.frame-inner {
+  flex: 1;
+}
+
+/* controls ----------------------------------------------------------------- */
+
+.btn-update {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  border: none;
+  padding: 5px;
+  width: 30px;
+  height: 30px;
+  box-shadow: 0 3px 5px rgba(0,0,0,0.3);
+  border-radius: 50%;
+  background: #fff;
+}
+
+.btn-update:focus, .btn-update:hover {
+  outline: none;
+  background-color: #ddd;
+}
+
+.btn-update svg {
+  width: 20px;
+  height: 20px;
+  transform-origin: 10px 10px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg) }
+}
+
+.loading svg {
+  animation: spin 1s infinite linear;
+}
+
+/* display ----------------------------------------------------------------- */
+
+span {
+  display: block;
+}
+
+.loader {
+  text-align: center;
+  align-self: center;
+}
+
+.err-text {
+  position: absolute;
+  width:100%;
+  text-align: center;
+  left:0;
+  top: 5px;
+  color: red;
+}

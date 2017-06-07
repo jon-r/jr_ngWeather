@@ -1,8 +1,8 @@
 /*
 // TODO:
 
-[ ] offline/no location/ etc error messages
-[ ] loading/refreshing spinner
+[/] offline/no location/ etc error messages
+[/] loading/refreshing spinner
 [ ] options import (cachetime, img source)
 [ ] auto update? fix the clock to be more accurate?
 [ ] better formatted
@@ -14,9 +14,9 @@ import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/interval';
 import 'rxjs/add/operator/startWith';
+import 'rxjs/add/operator/switchMap';
 
-import { GeolocationService } from './geo/geolocation.service';
-import { Geolocation } from './geo/geolocation';
+import { GeolocationService, Geolocation } from './geo/geolocation.service';
 
 import { WeatherApiService } from './weather/weather-api.service';
 
@@ -29,13 +29,14 @@ import { CacheService, CacheParts } from './cache/cache.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-
+  err: string;
   time: Date;
   date: Date;
   day: number;
   season: string;
   values: any;
   weatherBG: Object;
+  isLoading: boolean;
 
   constructor(
     public geolocationService: GeolocationService,
@@ -44,22 +45,26 @@ export class AppComponent implements OnInit {
   ) {};
 
   updateWeather(forceUpdate = false) {
+    this.err = '';
+    this.isLoading = true;
+
+    const geoLocation = this.geolocationService;
+    const weatherAPI = this.weatherApiService;
+    const cache = this.cacheService;
+
     const timeStamp = Date.now();
-    const hasCache = this.cacheService.checkCached();
+    const hasCache = cache.check();
     if (hasCache && !forceUpdate) {
-      this.cacheService.getCached();
+      cache.get();
       return true;
     }
 
-    this.geolocationService.getLocation().subscribe(location => {
-      this.weatherApiService.getWeather(location).subscribe(weather => {
-        this.cacheService.setCached({
-          weather,
-          location,
-          timeStamp,
-        });
-      });
-    });
+    geoLocation.get()
+    .switchMap(location => weatherAPI.get(location))
+    .subscribe(
+      weather => cache.set({weather, timeStamp}),
+      err => this.handleError(err),
+    );
   };
 
   updateTime() {
@@ -88,19 +93,25 @@ export class AppComponent implements OnInit {
   }
 
   setBG(values: CacheParts) {
-    if (!values || !values.weather) {
+    if (!values) {
       return '';
     }
 
     const icon = values.weather.weather[0].icon;
-    const url = `url(http://openweathermap.org/img/w/${icon}.png)`;
 
-    return { 'background-image' : url };
+    return icon;
+  }
+
+  handleError(err) {
+    console.log(err);
+    this.isLoading = false;
+    this.err = 'Whoops! Please try again later';
   }
 
   ngOnInit() {
-    this.values = this.cacheService.dataOutput$
+    this.cacheService.dataOutput$
     .subscribe(values => {
+      setTimeout(() => { this.isLoading = false; }, 1000 );
       this.values = values;
       this.weatherBG = this.setBG(values);
     });

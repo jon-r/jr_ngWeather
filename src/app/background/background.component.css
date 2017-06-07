@@ -1,0 +1,15 @@
+@keyframes fade-in {
+  from { opacity: 0  }
+  to { opacity: 1 }
+}
+
+.background-image-float {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  background: #a8bdd3 center/contain no-repeat;
+  border-radius: 8px;
+  animation: fade-in 500ms both ease-out;
+}

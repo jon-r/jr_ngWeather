@@ -1,26 +1,34 @@
-<div class="weather-frame" [ngStyle]="weatherBG"  >
+<div class="weather-frame"  >
 
-  <button class="btn-update" (click)="updateWeather(true)" >Refresh</button>
+  <ng-container *ngIf="values?.weather as weather; else loading" >
+    <app-background [bgRef]="weatherBG" ></app-background>
 
-  <ng-container *ngIf="values.weather as weather; else loading" >
-
-    <div class="frame-inner" >
-      <span class="temp" >{{ weather.main.temp | number:'1.0-0' }}&deg;C</span>
-      <span class="weather" >{{ weather.weather[0].description }}</span>
+    <div class="weather-content">
+      <div class="frame-inner" >
+        <span class="temp" >{{ weather.main.temp | number:'1.0-0' }}&deg;C</span>
+        <span class="weather" >{{ weather.weather[0].description }}</span>
+      </div>
+      <div class="frame-inner text-right">
+        <span class="time" >{{ time | date:'HH:mm' }}</span>
+        <span class="location" >{{ weather.name }}</span>
+        <span class="season" >{{ season }}</span>
+        <span class="date" >{{ date | date:'d MMMM y' }}</span>
+        <span class="date" >{{ date | date:'EEEE' }}</span>
+      </div>
     </div>
-    <div class="frame-inner text-right">
-      <span class="time" >{{ time | date:'HH:mm' }}</span>
-      <span class="location" >{{ weather.name }}</span>
-      <span class="season" >{{ season }}</span>
-      <span class="date" >{{ date | date:'d MMMM y' }}</span>
-      <span class="date" >{{ date | date:'EEEE' }}</span>
-    </div>
-
   </ng-container>
+
   <ng-template #loading>
     <div class="frame-inner loader" >
       Loading...
     </div>
   </ng-template>
+
+  <button class="btn-update" [ngClass]="{ 'loading': isLoading }" (click)="updateWeather(true)" >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -10 20 20">
+      <g fill="none" stroke="#000" stroke-width="2"><circle r="6" stroke-dasharray="28 10" stroke-dashoffset="9"/><path d="M-6-1l1 1h-2z"/></g>
+    </svg>
+  </button>
+  <span class="err-text" *ngIf="err" >{{err}}</span>
 
 </div>
